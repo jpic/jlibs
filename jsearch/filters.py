@@ -1,8 +1,11 @@
 from django import forms
 
-class BaseFilter(object):
+import jdealers
+
+class BaseFilter(jdealers.FormFieldDealer):
     def __init__(self,
-        queryset_filter_type='iexact', formfield=None, value=None,
+        queryset_filter_type='iexact', value=None,
+        formfield = None, formfield_class = None,
         url_name_value_separator=':', restrict_request_method=()):
         """
         >>> from django import forms
@@ -32,16 +35,14 @@ class BaseFilter(object):
         >>> failed
         True
         """
+        super(BaseFilter, self).__init__(formfield, formfield_class)
+
         if restrict_request_method:
             for method in restrict_request_method:
                 if method not in ('post', 'get'):
                     raise Exception('restrict_request_method may not hold anything else than "post" and/or "get"')
 
-        if formfield and not isinstance(formfield, forms.Field):
-            raise Exception('formfield must be a subclass of forms.Field')
-
         self.queryset_filter_type = queryset_filter_type
-        self.formfield = formfield
         self.value = value
         self.url_name_value_separator = url_name_value_separator
         self.restrict_request_method = restrict_request_method
@@ -70,6 +71,8 @@ class BaseFilter(object):
 
         form.fields[name] = self.formfield
 
+        return form
+
     def filter_url(self, name, url = '/'):
         """
         >>> class BaseFilterMock(BaseFilter):
@@ -89,7 +92,7 @@ class BaseFilter(object):
         if not url[-1] == '/':
             url += '/'
 
-        return '%s%s/' % (url,self.create_urlfilter(name))
+        return '%s%s/' % (url, self.create_urlfilter(name))
     
     def filter_queryset(self, name, queryset):
         """
@@ -97,10 +100,11 @@ class BaseFilter(object):
         """
         if self.value:
             # Credits: habnabit from #python@freenode
-            q = q.filter(**{ '%s__%s' % 
-                (name, self.queryset_filter_type): self.value})
+            return queryset.filter( **{ '%s__%s' % (name, self.queryset_filter_type): self.value} )
+        else:
+            return queryset
    
-    def parse_request(self, request):
+    def parse_request(self, name, request):
         """
         >>> from django.http import HttpRequest
         >>> request = HttpRequest()
@@ -146,12 +150,41 @@ class BaseFilter(object):
         >>> m.get_parsed
         True
         """
+        print "Anything in post?", request.POST
         if 'get' not in self.restrict_request_method:
-            self.parse_get(request)
+            self.parse_get(name, request)
 
         if 'post' not in self.restrict_request_method \
             and request.method == 'POST':
-            self.parse_post(request)
+            self.parse_post(name, request)
+
+    def get_formfield(self):
+        return self.formfield_class(initial=self.value)
+
+    def get_formfield_class(self):
+        return forms.CharField
+
+    def parse_post(self, name, request):
+        """
+        >>> k = 'bar'
+        >>> v = 'foo'
+        >>> from django.http import HttpRequest
+        >>> request = HttpRequest()
+        >>> f = ValueFilter()
+        >>> f.parse_post(k, request)
+        >>> f.value
+        >>> request.POST[v] = k
+        >>> f.parse_post(k, request)
+        >>> f.value
+        >>> request.POST[k] = v
+        >>> f.parse_post(k, request)
+        >>> f.value
+        'foo'
+        """
+        print "Parsing post for", name
+        if name in request.POST and request.POST[name]:
+            print "Found some nvalue in post for", name, request.POST[name]
+            self.value = self.formfield.clean(request.POST[name])
 
 class ValueFilter(BaseFilter):
     def create_urlfilter(self, name):
@@ -165,7 +198,7 @@ class ValueFilter(BaseFilter):
         if self.value:
             return '%s%s%s' % (name, self.url_name_value_separator, self.value)
 
-    def create_formfield(self):
+    def get_formfield_class(self):
         """
         >>> f = ValueFilter()
         >>> f.create_formfield().__class__.__name__
@@ -177,7 +210,7 @@ class ValueFilter(BaseFilter):
         >>> f.create_formfield().initial
         'bar'
         """
-        return forms.CharField(initial=self.value)
+        return forms.CharField
 
     def parse_get(self, name, request):
         """
@@ -197,26 +230,6 @@ class ValueFilter(BaseFilter):
             if part.find(name) == 0 and position > 0:
                 self.value = part[position+1:]
     
-    def parse_post(self, name, request):
-        """
-        >>> k = 'bar'
-        >>> v = 'foo'
-        >>> from django.http import HttpRequest
-        >>> request = HttpRequest()
-        >>> f = ValueFilter()
-        >>> f.parse_post(k, request)
-        >>> f.value
-        >>> request.POST[v] = k
-        >>> f.parse_post(k, request)
-        >>> f.value
-        >>> request.POST[k] = v
-        >>> f.parse_post(k, request)
-        >>> f.value
-        'foo'
-        """
-        if name in request.POST and request.POST[name]:
-            self.value = request.POST[name]
-
 #class SingleInputMultiValueFilter(BaseFilter):
 #    def __init__(self, *args,
 #        # input_value_separator=',', # syntax restriction
