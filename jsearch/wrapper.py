@@ -11,7 +11,7 @@ class FilterWrapper(jdealers.FormDealer, dict):
         self.url = url
         self.auto_add_missing_filters = auto_add_missing_filters
 
-        super(FilterWrapper, self).__init__(form=form, form_class=None)
+        super(FilterWrapper, self).__init__(form=form, form_class=form_class)
 
     def parse_request(self, request):
         if not self.auto_add_missing_filters and not self.form_class \
