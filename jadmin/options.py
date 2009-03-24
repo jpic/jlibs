@@ -35,10 +35,17 @@ class ModelAdmin(admin.ModelAdmin):
         return self.search_engine.filter_queryset()
 
     def create_search_engine(self, request):
+        form_class = form_models.modelform_factory(
+            self.model,
+            fields = self.get_jsearch_fields(request),
+            formfield_callback = self.formfield_for_dbfield
+        )
+
         engine = jsearch.ModelSearch(
             model_class = self.model,
             queryset = super(ModelAdmin, self).queryset(request),
-            search_fields = self.get_jsearch_fields(request)
+            search_fields = self.get_jsearch_fields(request),
+            form_class = form_class
         )
         return engine
 
