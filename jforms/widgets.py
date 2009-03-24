@@ -18,7 +18,8 @@ class ManyToManySearchInput(forms.SelectMultiple):
     def label_for_value(self, value):
         return ''
 
-    def __init__(self, rel, search_fields, attrs=None):
+    def __init__(self, rel, search_fields, attrs=None, search_url='../search'):
+        self.search_url = search_url
         self.rel = rel
         self.search_fields = search_fields
         super(ManyToManySearchInput, self).__init__(attrs)
@@ -170,7 +171,8 @@ class ForeignKeySearchInput(forms.HiddenInput):
         obj = self.rel.to._default_manager.get(**{key: value})
         return truncate_words(obj, 14)
 
-    def __init__(self, rel, search_fields, attrs=None):
+    def __init__(self, rel, search_fields, attrs=None, search_url='../search'):
+        self.search_url = search_url
         self.rel = rel
         self.search_fields = search_fields
         super(ForeignKeySearchInput, self).__init__(attrs)
