@@ -1,6 +1,8 @@
 from django.forms import models as form_models
 from django.db import models
 from django.contrib import admin
+from django.shortcuts import render_to_response
+from django import template
 
 from django.conf import settings
 
@@ -20,6 +22,46 @@ class ModelAdmin(admin.ModelAdmin):
             'js/php.min.js',
             '/media/js/urlify.js',
         )
+    
+    # Custom templates (designed to be over-ridden in subclasses)
+    public_search_template = None
+
+    def get_urls(self):
+        from django.conf.urls.defaults import patterns, url
+        
+        info = self.admin_site.name, self.model._meta.app_label, self.model._meta.module_name
+        
+        urlpatterns = patterns('',
+            url(r'^public/search/$',
+                self.public_search_view,
+                name='%sadmin_%s_%s_public_search' % info),
+        ) + super(ModelAdmin, self).get_urls()
+
+        return urlpatterns
+ 
+    def public_search_view(self, request, extra_context=None):
+        opts = self.model._meta
+        app_label = opts.app_label
+
+        if hasattr(self, 'create_public_search_engine'):
+            self.search_engine = self.create_public_search_engine(request)
+        else:
+            self.search_engine = self.create_search_engine(request)
+        
+        self.search_engine.parse_request(request)
+
+        context = {
+            'jsearch': self.search_engine,
+        }
+
+        if extra_context:
+            context += extra_context
+
+        return render_to_response(self.public_search_template or [
+            "jadmin/%s/%s/public_search.html" % (app_label, opts.object_name.lower()),
+            "jadmin/%s/public_search.html" % app_label,
+            "jadmin/public_search.html"
+        ], context, context_instance=template.RequestContext(request)) 
 
     def changelist_view(self, request, extra_context=None):
         self.search_engine = self.create_search_engine(request)
