@@ -18,8 +18,8 @@ class ManyToManySearchInput(forms.SelectMultiple):
     def label_for_value(self, value):
         return ''
 
-    def __init__(self, rel, search_fields, attrs=None, search_url='../search'):
-        self.search_url = search_url
+    def __init__(self, rel, search_fields, attrs=None, autocomplete_url='/search/'):
+        self.autocomplete_url = autocomplete_url
         self.rel = rel
         self.search_fields = search_fields
         super(ManyToManySearchInput, self).__init__(attrs)
@@ -113,7 +113,7 @@ class ManyToManySearchInput(forms.SelectMultiple):
             $('#lookup_%(name)s').keydown( function(){$('#busy_%(name)s').show();});
             
             $('#lookup_%(name)s')
-            var event=$('#lookup_%(name)s').autocomplete('/search/', {
+            var event=$('#lookup_%(name)s').autocomplete('%(autocomplete_url)s', {
                 extraParams: {
                     search_fields: '%(search_fields)s',
                     app_label: '%(app_label)s',
@@ -149,6 +149,7 @@ class ManyToManySearchInput(forms.SelectMultiple):
             'name': name,
             'ul':ul, 
             'select':select, 
+            'autocomplete_url': self.autocomplete_url,
         }
 
 class ForeignKeySearchInput(forms.HiddenInput):
@@ -171,8 +172,8 @@ class ForeignKeySearchInput(forms.HiddenInput):
         obj = self.rel.to._default_manager.get(**{key: value})
         return truncate_words(obj, 14)
 
-    def __init__(self, rel, search_fields, attrs=None, search_url='../search'):
-        self.search_url = search_url
+    def __init__(self, rel, search_fields, attrs=None, autocomplete_url='/autocomplete'):
+        self.autocomplete_url = autocomplete_url
         self.rel = rel
         self.search_fields = search_fields
         super(ForeignKeySearchInput, self).__init__(attrs)
@@ -205,7 +206,7 @@ class ForeignKeySearchInput(forms.HiddenInput):
             if ($('#lookup_%(name)s').val()) {
                 $('#del_%(name)s').show()
             }
-            $('#lookup_%(name)s').autocomplete('/search/', {
+            $('#lookup_%(name)s').autocomplete('%(autocomplete_url)s', {
                 extraParams: {
                     search_fields: '%(search_fields)s',
                     app_label: '%(app_label)s',
@@ -230,4 +231,5 @@ class ForeignKeySearchInput(forms.HiddenInput):
             'app_label': self.rel.to._meta.app_label,
             'label': label,
             'name': name,
+            'autocomplete_url': self.autocomplete_url,
         }
