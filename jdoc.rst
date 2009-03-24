@@ -228,10 +228,11 @@ The `search` block of template `admin/change_list.html` should be overloaded to 
     <input type="submit" />
     </form>
     {% endblock %}
-To do
-~~~~~
 
-0_alpha1: search engine configuration registry.
-0_alpha2: search engine base views.
-0_alpha3: queryset detail configurable view.
-0_beta0:  working in my app.
+Versions
+~~~~~~~~
+
+0_alpha0: custom search engine, custom relations widgets.
+0_alpha1: "public" site, not allowing changes, not requiring request.user.is_staff.
+0_alpha2: jhtml tabular layout renderer for public site change_view.
+0_beta0: works for me.
