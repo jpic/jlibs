@@ -16,16 +16,21 @@ import jforms
 class ModelAdmin(admin.ModelAdmin):
     class Media:
         css = {
-            'all': ('jautocomplete/jquery.autocomplete.css',)
+            'all': (
+                'jautocomplete/jquery.autocomplete.css',
+                'style.css',
+            ),
         }
         js = (
             'jquery.min.js',
             'jautocomplete/lib/jquery.bgiframe.min.js',
             'jautocomplete/lib/jquery.ajaxQueue.js',
             'jautocomplete/jquery.autocomplete.js',
+            'jmenu/jquerycssmenu.js',
             'js/php.min.js',
             '/media/js/urlify.js',
         )
+
     def get_urls(self):        
         from django.conf.urls.defaults import patterns, url
 
@@ -56,7 +61,7 @@ class ModelAdmin(admin.ModelAdmin):
         app_label = request.GET.get('app_label', None)
         model_name = request.GET.get('model_name', None)
 
-        if search_fields and app_label and model_name and query:
+        if search_fields and app_label and model_name:
             def construct_search(field_name):
                 # use different lookup methods depending on the notation
                 if field_name.startswith('^'):
@@ -90,6 +95,17 @@ class ModelAdmin(admin.ModelAdmin):
             'jsearch': self.search_engine,
         }
 
+        opts = self.model._meta
+        app_label = opts.app_label
+
+        self.change_list_template = [
+            'jadmin/%s/%s/change_list.html' % (app_label, opts.object_name.lower()),
+            'jadmin/%s/change_list.html' % app_label,
+            'jadmin/change_list.html',
+            'admin/%s/%s/change_list.html' % (app_label, opts.object_name.lower()),
+            'admin/%s/change_list.html' % app_label,
+            'admin/change_list.html',
+        ]
         return super(ModelAdmin, self).changelist_view(request, extra_context)
 
     def queryset(self, request):
