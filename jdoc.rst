@@ -185,14 +185,18 @@ jadmin
 Overview
 --------
 
+It extends `django.contrib.admin` making it more useable for very large projects.
+
+`jadmin.AdminSite` allows making a tree-ish navigation menu to replace `breadcrumbs`.
+
 Provides a subclass of `django.contrib.admin.options.ModelAdmin`, making FK and M2M fields using jforms widget.
+
+`jadmin.ModelAdmin` embeds `jsearch` into `changelist_view`, to provide a more usable search engine.
 
 There is also a hack to get `django` to support field-level constraints, which is also maintained, but lets you on your own - sorry about that.
 
-`jadmin.ModelAdmin` also embeds `jsearch` into `changelist_view`, to provide a more usable search engine.
-
-Usage
------
+Search engine usage
+-------------------
 
 Get jQuery autocomplete for FK and M2M fields in the admin::
 
@@ -228,6 +232,55 @@ The `search` block of template `admin/change_list.html` should be overloaded to 
     <input type="submit" />
     </form>
     {% endblock %}
+
+Navigation menu usage
+---------------------
+
+Example yourapp/sites/__init__.py, it isn't supposed to be used as-is but prooves the concept::
+
+    # vim: set fileencoding=utf8 :
+    import jadmin
+    
+    class AdminSite(jadmin.AdminSite):
+        def get_menu_structure(self):
+            return {
+                u"root level 0": {
+                    u"submenu 00": '/admin/foo',
+                    u"submenu 01": '/admin/bar',
+                },
+                u"root level 1: '/admin/other',
+            }
+
+    admin = AdminSite()
+
+    # Hack to register all installed apps ModelAdmin
+    from django.contrib import admin as django_admin
+    django_admin.site = admin
+    # This should not be done in urls.py when dealing
+    # with multiple AdminSite
+    django_admin.autodiscover()
+
+    # Register our models, we just need to load it
+    import sites.admin as immo_admin_config
+
+Example yourapp/sites/admin.py::
+
+    # vim: set fileencoding=utf8 :
+    from sites import admin as site
+    import jadmin
+    import models
+
+    site.register(models.FooModel)
+
+Examples urls.py::
+
+    from django.conf.urls.defaults import *
+
+    from yourproject.yourapp import sites
+
+    urlpatterns = patterns('',
+        r'^admin/', include(sites.admin.urls)),
+    )
 
 Versions
 ~~~~~~~~
