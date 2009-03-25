@@ -118,7 +118,21 @@ class ManyToManySearchInput(forms.SelectMultiple):
                     search_fields: '%(search_fields)s',
                     app_label: '%(app_label)s',
                     model_name: '%(model_name)s',
-                }
+                },
+                mustMatch: true,
+                matchContains: false,
+                minChars: 0,
+        		width: 320,
+        		max: 25,
+        		highlight: false,
+        		scroll: true,
+        		scrollHeight: 500,
+        		formatItem: function(data, i, n, value) {
+        			return value.split(".")[0];
+        		},
+        		formatResult: function(data, value) {
+        			return value.split(".")[0];
+        		}
             });
             event.result(function(event, data, formatted) {
                 $('#busy_%(name)s').hide();
