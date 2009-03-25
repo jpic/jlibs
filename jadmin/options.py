@@ -31,6 +31,9 @@ class ModelAdmin(admin.ModelAdmin):
             '/media/js/urlify.js',
         )
 
+    def get_menu(self):
+        return self.admin_site.get_menu()
+
     def get_urls(self):        
         from django.conf.urls.defaults import patterns, url
 
@@ -86,6 +89,12 @@ class ModelAdmin(admin.ModelAdmin):
             data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
             return HttpResponse(data)
         return HttpResponseNotFound()
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        context.update({'jmenu': self.get_menu()})
+
+        response = super(ModelAdmin, self).render_change_form(request, context, add, change, form_url, obj)
+        return response
 
     def changelist_view(self, request, extra_context=None):
         self.search_engine = self.create_search_engine(request)
