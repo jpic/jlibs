@@ -110,8 +110,7 @@ class ModelAdmin(admin.ModelAdmin):
 
         opts = self.model._meta
         app_label = opts.app_label
-
-        self.change_list_template = "jadmin/change_list.html"
+        
         return super(ModelAdmin, self).changelist_view(request, extra_context)
 
     def queryset(self, request):
