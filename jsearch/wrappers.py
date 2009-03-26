@@ -1,6 +1,9 @@
 from django import forms
+from django.db.models.query import QuerySet
 
+from exceptions import *
 import jdealers
+
 
 class FilterWrapper(jdealers.FormDealer, dict):
     def __init__(self, queryset=None, url='/', form=None, form_class=None, \
@@ -36,8 +39,8 @@ class FilterWrapper(jdealers.FormDealer, dict):
         return self.url
 
     def filter_queryset(self):
-        if not self.queryset:
-            raise Exception('Cannot filter a None queryset')
+        if not isinstance(self.queryset, QuerySet):
+            raise NoneQuerysetException()
 
         for name, filter in self.items():
             self.queryset = filter.filter_queryset(name, self.queryset)
