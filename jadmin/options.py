@@ -18,7 +18,6 @@ class ModelAdmin(admin.ModelAdmin):
         css = {
             'all': (
                 'jautocomplete/jquery.autocomplete.css',
-                'style.css',
             ),
         }
         js = (
@@ -91,6 +90,9 @@ class ModelAdmin(admin.ModelAdmin):
         return HttpResponseNotFound()
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        """
+        Adds jmenu to context before super'ing.
+        """
         context.update({'jmenu': self.get_menu()})
 
         response = super(ModelAdmin, self).render_change_form(request, context, add, change, form_url, obj)
@@ -103,6 +105,8 @@ class ModelAdmin(admin.ModelAdmin):
         extra_context = {
             'jsearch': self.search_engine,
         }
+
+        extra_context.update({'jmenu': self.get_menu()})
 
         opts = self.model._meta
         app_label = opts.app_label
