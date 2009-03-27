@@ -101,6 +101,15 @@ class ModelAdmin(admin.ModelAdmin):
     def queryset(self, request):
         return self.search_engine.filter_queryset()
 
+    def history_view(self, request, object_id, extra_context=None):
+        """
+        Add jmenu to the context and super
+        """
+        if not extra_context:
+            extra_context = {}
+        extra_context['jmenu'] = self.get_menu()
+        return super(ModelAdmin, self).history_view(request, object_id, extra_context)
+
     def create_search_engine(self, request):
         form_class = form_models.modelform_factory(
             self.model,
