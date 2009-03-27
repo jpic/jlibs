@@ -74,6 +74,9 @@ class ModelAdmin(admin.ModelAdmin):
         return HttpResponseNotFound()
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        """
+        Adds jmenu to context before super'ing.
+        """
         context.update({'jmenu': self.get_menu()})
 
         response = super(ModelAdmin, self).render_change_form(request, context, add, change, form_url, obj)
@@ -87,6 +90,8 @@ class ModelAdmin(admin.ModelAdmin):
             'jsearch': self.search_engine,
             'jmenu': self.get_menu(),
         }
+
+        extra_context.update({'jmenu': self.get_menu()})
 
         opts = self.model._meta
         app_label = opts.app_label

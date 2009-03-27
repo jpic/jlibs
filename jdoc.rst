@@ -195,6 +195,13 @@ Provides a subclass of `django.contrib.admin.options.ModelAdmin`, making FK and 
 
 There is also a hack to get `django` to support field-level constraints, which is also maintained, but lets you on your own - sorry about that.
 
+Install
+-------
+
+Add `jadmin` to INSTALLED_APPS or /path/to/jadmin/templates to TEMPLATE_DIRECTORIES.
+
+Symlink django/contrib/admin/templates/admin/ to /path/to/jadmin/templates/contrib/admin.
+
 Search engine usage
 -------------------
 
