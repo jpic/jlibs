@@ -1,2 +1,0 @@
-class NoneQuerysetException(Exception):
-    pass
