@@ -100,7 +100,8 @@ class BaseFilter(joptions.FormFieldOption):
         """
         if self.value:
             # Credits: habnabit from #python@freenode
-            return queryset.filter( **{ '%s__%s' % (name, self.queryset_filter_type): self.value} )
+            filters = { '%s__%s' % (name, self.queryset_filter_type): self.value}
+            return queryset.filter( **filters )
         else:
             return queryset
    
