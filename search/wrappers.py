@@ -2,7 +2,7 @@ from django import forms
 from django.db.models.query import QuerySet
 
 from exceptions import *
-import options as joptions
+from jlibs import options as joptions
 
 class FilterWrapper(joptions.FormOption, dict):
     def __init__(self, queryset=None, url='/', form=None, form_class=None, \
