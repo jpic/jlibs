@@ -1,9 +1,9 @@
 from django.forms import models
 
-import joptions
+from jlibs import options as joptions
 
-from jsearch import wrappers
-from jsearch import filters
+import wrappers
+import filters
 
 class ModelSearch(wrappers.FilterWrapper, joptions.ModelOption):
     def __init__(self, **kwargs):

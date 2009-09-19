@@ -1,6 +1,6 @@
 from django import forms
 
-import joptions
+import options as joptions
 
 class BaseFilter(joptions.FormFieldOption):
     def __init__(self,

@@ -6,7 +6,7 @@ Replace these with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-import jsearch
+import jlibs.search
 
 class FilterWrapperTest(TestCase):
     def test_basic_addition(self):
