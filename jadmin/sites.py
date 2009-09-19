@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.admin.util import quote
 from django.contrib import admin
 from jadmin import menus
+from django.core.urlresolvers import reverse
 
 class AdminSite(admin.AdminSite):
     class Media:
@@ -11,10 +12,10 @@ class AdminSite(admin.AdminSite):
             'jmenu/jquerycssmenu.js',
         )
 
-    def get_menu(self):
-        menu = menus.Menu()
-        f = menus.MenuFactories(self.get_menu_structure())
-        return f.menu
+    #def get_menu(self):
+    #    menu = menus.Menu()
+    #    f = menus.MenuFactories(self.get_menu_structure())
+    #    return f.menu
 
     def __init__(self, *args, **kwargs):
         super(AdminSite, self).__init__(*args, **kwargs)
@@ -24,24 +25,19 @@ class AdminSite(admin.AdminSite):
         return self.info + (model._meta.app_label, model._meta.module_name,)
 
     def get_changelist_urlname(self, model):
-        name = '%sadmin_%s_%s_changelist' % self.get_model_info(model)
-        return name
+        return '%sadmin_%s_%s_changelist' % self.get_model_info(model)
 
     def get_add_urlname(self, model):
-        name = '%sadmin_%s_%s_add' % self.get_model_info(model)
-        return name
+        return '%sadmin_%s_%s_add' % self.get_model_info(model)
 
     def get_history_urlname(self, model):
-        name = '%sadmin_%s_%s_history' % self.get_model_info(model)
-        return name
+        return '%sadmin_%s_%s_history' % self.get_model_info(model)
 
     def get_delete_urlname(self, model):
-        name = '%sadmin_%s_%s_delete' % self.get_model_info(model)
-        return name
+        return '%sadmin_%s_%s_delete' % self.get_model_info(model)
 
     def get_change_urlname(self, model):
-        name = '%sadmin_%s_%s_change' % self.get_model_info(model)
-        return name
+        return '%sadmin_%s_%s_change' % self.get_model_info(model)
 
     def index(self, request, extra_context=None):
         if not extra_context:

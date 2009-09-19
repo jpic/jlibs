@@ -1,8 +1,8 @@
 from django import forms
 
-import jdealers
+import joptions
 
-class BaseFilter(jdealers.FormFieldDealer):
+class BaseFilter(joptions.FormFieldOption):
     def __init__(self,
         queryset_filter_type='iexact', value=None,
         formfield = None, formfield_class = None,

@@ -292,8 +292,8 @@ Examples urls.py::
 Versions
 ~~~~~~~~
 
-0_alpha0: custom search engine, custom relations widgets.
-0_alpha1: replace breadcrumbs with a tree-ish jquery (overridable) navigation.
-0_alpha2: "public" site, not allowing changes, not requiring request.user.is_staff.
-0_alpha3: jhtml tabular layout renderer for public site change_view.
-0_beta0: works for me.
+- 0_alpha0: custom search engine, custom relations widgets.
+- 0_alpha1: replace breadcrumbs with a tree-ish jquery (overridable) navigation.
+- 0_alpha2: "public" site, not allowing changes, not requiring request.user.is_staff.
+- 0_alpha3: jhtml tabular layout renderer for public site change_view.
+- 0_beta0: works for me.

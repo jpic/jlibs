@@ -1,11 +1,11 @@
 from django.forms import models
 
-import jdealers
+import joptions
 
 from jsearch import wrappers
 from jsearch import filters
 
-class ModelSearch(wrappers.FilterWrapper, jdealers.ModelDealer):
+class ModelSearch(wrappers.FilterWrapper, joptions.ModelOption):
     def __init__(self, **kwargs):
         if not 'model' in kwargs and not 'model_class' in kwargs \
             and not hasattr(self, 'get_model_class') \

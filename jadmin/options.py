@@ -34,45 +34,6 @@ class ModelAdmin(admin.ModelAdmin):
         ) + super(ModelAdmin, self).get_urls()
         return urlpatterns
 
-    def autocomplete_view(self, request):
-        import operator
-        from django.http import HttpResponse, HttpResponseNotFound
-        from django.db.models.query import QuerySet
-        from django.utils.encoding import smart_str
-
-        query = request.GET.get('q', None)
-        search_fields = request.GET.get('search_fields', None)
-        # TODO: figure is app_name and model_name are worth getting
-        # from the url or hack jforms.widgets
-        app_label = request.GET.get('app_label', None)
-        model_name = request.GET.get('model_name', None)
-
-        if search_fields and app_label and model_name:
-            def construct_search(field_name):
-                # use different lookup methods depending on the notation
-                if field_name.startswith('^'):
-                    return "%s__istartswith" % field_name[1:]
-                elif field_name.startswith('='):
-                    return "%s__iexact" % field_name[1:]
-                elif field_name.startswith('@'):
-                    return "%s__search" % field_name[1:]
-                else:
-                    return "%s__icontains" % field_name
-
-            model = models.get_model(app_label, model_name)
-            qs = model._default_manager.all()
-            for bit in query.split():
-                or_queries = [models.Q(**{construct_search(
-                    smart_str(field_name)): smart_str(bit)})
-                        for field_name in search_fields.split(',')]
-                other_qs = QuerySet(model)
-                other_qs.dup_select_related(qs)
-                other_qs = other_qs.filter(reduce(operator.or_, or_queries))
-                qs = qs & other_qs
-            data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
-            return HttpResponse(data)
-        return HttpResponseNotFound()
-
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         """
         Adds jmenu to context before super'ing.
@@ -156,7 +117,8 @@ class ModelAdmin(admin.ModelAdmin):
             if jrelation_search_fields:
                 kwargs['widget'] = widget(db_field.rel, jrelation_search_fields, autocomplete_url=autocomplete_url)
         
-        return super(ModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        field = super(ModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        return field
 
     def get_jrelation_search_fields(self, model):
         if not hasattr(self, 'jrelation_search_fields'):

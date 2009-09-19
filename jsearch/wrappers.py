@@ -2,10 +2,10 @@ from django import forms
 from django.db.models.query import QuerySet
 
 from exceptions import *
-import jdealers
+import joptions
 
 
-class FilterWrapper(jdealers.FormDealer, dict):
+class FilterWrapper(joptions.FormOption, dict):
     def __init__(self, queryset=None, url='/', form=None, form_class=None, \
         auto_add_missing_filters=True):
         self.queryset = queryset

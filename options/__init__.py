@@ -1,4 +1,4 @@
-class ModelDealer(object):
+class ModelOption(object):
     def __init__(self, model=None, model_class=None):
         self._model = model
         self._model_class = model_class
@@ -20,7 +20,7 @@ class ModelDealer(object):
     def get_model(self):
         return self._model_class()
 
-class FormFieldDealer(object):
+class FormFieldOption(object):
     def __init__(self, formfield=None, formfield_class=None):
         self._formfield = formfield
         self._formfield_class = formfield_class
@@ -45,7 +45,7 @@ class FormFieldDealer(object):
     def get_formfield(self):
         return self._form_class()
 
-class FormDealer(object):
+class FormOption(object):
     def __init__(self, form=None, form_class=None):
         self._form = form
         self._form_class = form_class
