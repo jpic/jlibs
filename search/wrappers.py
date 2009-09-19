@@ -24,7 +24,6 @@ class FilterWrapper(joptions.FormOption, dict):
             self.add_missing_fields()
 
         for name, filter in self.items():
-            print name, filter
             filter.parse_request(name, request)
 
         return self

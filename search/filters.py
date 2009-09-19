@@ -150,7 +150,6 @@ class BaseFilter(joptions.FormFieldOption):
         >>> m.get_parsed
         True
         """
-        print "Anything in post?", request.POST
         if 'get' not in self.restrict_request_method:
             self.parse_get(name, request)
 
