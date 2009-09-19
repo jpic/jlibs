@@ -16,14 +16,17 @@ Overview
 The search engine converts input to forms and querysets.
 
 It can parse the following types of input:
+
 - get,
 - post.
 
 It can generate:
+
 - forms,
 - querysets.
 
 It starts being useful ootb when provided the following elements:
+
 - a base queryset,
 - filters.
 
@@ -131,6 +134,7 @@ ModelChoiceWidget class
 Extends django.forms.HiddenInput.
 
 Critical attributes:
+
 - either `rel` or `model`,
 - `search_field`,
 
