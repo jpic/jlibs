@@ -32,9 +32,9 @@ class FilterWrapper(joptions.FormOption, dict):
         url = self.url
 
         for name, filter in self.items():
-            self.url = filter.filter_url(name, url)
+            url = filter.filter_url(name, url)
   
-        return self.url
+        return url
 
     def filter_queryset(self):
         if not isinstance(self.queryset, QuerySet):
